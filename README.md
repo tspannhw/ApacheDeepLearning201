@@ -24,7 +24,7 @@ https://github.com/tspannhw/nifi-gluoncv-yolo3
 
 
 
-![Deep Learning Cat](cat.gif)
+![Deep Learning Image](fcn_p_image_20181031182356_75e2b7eb-3b90-4231-b6bb-322a89034893.png)
 
 ## Articles
 
