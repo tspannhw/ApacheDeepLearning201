@@ -59,9 +59,10 @@ if __name__ == '__main__':
     ret, frame = cap.read()
     uuid = '{0}_{1}'.format(strftime("%Y%m%d%H%M%S",gmtime()),uuid.uuid4())
     filename = 'images/rccn_image_{0}.jpg'.format(uuid)
+    filename2 = 'images/rccn_p_image_{0}.jpg'.format(uuid)
     cv2.imwrite(filename, frame)
 
-    image_list = [filename]
+    image = filename
 
     if args.pretrained.lower() in ['true', '1', 'yes', 't']:
         net = gcv.model_zoo.get_model(args.network, pretrained=True)
@@ -72,10 +73,11 @@ if __name__ == '__main__':
     net.collect_params().reset_ctx(ctx = ctx)
 
     ax = None
-    for image in image_list:
-        x, img = presets.rcnn.load_test(image, short=net.short, max_size=net.max_size)
-        x = x.as_in_context(ctx[0])
-        ids, scores, bboxes = [xx[0].asnumpy() for xx in net(x)]
-        ax = gcv.utils.viz.plot_bbox(img, bboxes, scores, ids,
+    x, img = presets.rcnn.load_test(image, short=net.short, max_size=net.max_size)
+    x = x.as_in_context(ctx[0])
+    ids, scores, bboxes = [xx[0].asnumpy() for xx in net(x)]
+    ax = gcv.utils.viz.plot_bbox(img, bboxes, scores, ids,
                                      class_names=net.classes, ax=ax)
-        plt.show()
+    plt.savefig(filename2)
+
+
