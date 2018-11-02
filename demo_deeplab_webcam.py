@@ -76,11 +76,10 @@ predict = mx.nd.squeeze(mx.nd.argmax(output, 1)).asnumpy()
 from gluoncv.utils.viz import get_color_pallete
 import matplotlib.image as mpimg
 mask = get_color_pallete(predict, 'ade20k')
-mask.save('output.png')
-
-##############################################################################
+#mask.save('output.png')
+mask.save(filename2)
 # show the predicted mask
-mmask = mpimg.imread('output.png')
-plt.imshow(mmask)
+#mmask = mpimg.imread('output.png')
+#plt.imshow(mmask)
 #plt.show()
-plt.savefig(filename2)
+#plt.savefig(filename2)

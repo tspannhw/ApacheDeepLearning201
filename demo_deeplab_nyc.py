@@ -1,9 +1,5 @@
-import os
-import argparse
-import mxnet as mx
-import cv2
 import time
-import gluoncv as gcv
+from matplotlib import pyplot as plt
 import sys
 import datetime
 import subprocess
@@ -29,10 +25,6 @@ import time
 import psutil
 import scipy.misc
 from time import gmtime, strftime
-from gluoncv.data.transforms import presets
-from matplotlib import pyplot as plt
-
-start = time.time()
 import mxnet as mx
 from mxnet import image
 from mxnet.gluon.data.vision import transforms
@@ -40,20 +32,16 @@ import gluoncv
 # using cpu
 ctx = mx.cpu(0)
 
-cap = cv2.VideoCapture(0)
-time.sleep(1)  ### letting the camera autofocus
-ret, frame = cap.read()
 uuid = '{0}_{1}'.format(strftime("%Y%m%d%H%M%S",gmtime()),uuid.uuid4())
-filename = 'images/fcn_image_{0}.png'.format(uuid)
-filename2 = 'images/fcn_p_image_{0}.png'.format(uuid)
-cv2.imwrite(filename, frame)
+filename2 = 'images/dl3_img_nyc_{0}.png'.format(uuid)
+filename = 'images/dl3_org_nyc_{0}.png'.format(uuid)
+
+# http://207.251.86.238/cctv787.jpg
+url = sys.argv[1]
+gluoncv.utils.download(url, filename, True)
 
 ##############################################################################
-
-#from matplotlib import pyplot as plt
-#plt.imshow(img.asnumpy())
-#plt.show()
-
+# load the image
 img = image.imread(filename)
 
 ##############################################################################
@@ -70,7 +58,7 @@ img = img.expand_dims(0).as_in_context(ctx)
 # ----------------------------------------------
 #
 # get pre-trained model
-model = gluoncv.model_zoo.get_model('fcn_resnet101_voc', pretrained=True)
+model = gluoncv.model_zoo.get_model('deeplab_resnet101_ade', pretrained=True)
 
 ##############################################################################
 # make prediction using single scale
@@ -81,12 +69,11 @@ predict = mx.nd.squeeze(mx.nd.argmax(output, 1)).asnumpy()
 # Add color pallete for visualization
 from gluoncv.utils.viz import get_color_pallete
 import matplotlib.image as mpimg
-mask = get_color_pallete(predict, 'pascal_voc')
+mask = get_color_pallete(predict, 'ade20k')
+#mask.save('output.png')
 mask.save(filename2)
-sys.exit(0);
-#############################################################################
 # show the predicted mask
-#mmask = mpimg.imread(filename2)
+#mmask = mpimg.imread('output.png')
 #plt.imshow(mmask)
 #plt.show()
-
+#plt.savefig(filename2)
