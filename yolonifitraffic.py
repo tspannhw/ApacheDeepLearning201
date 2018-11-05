@@ -1,6 +1,7 @@
 # See https://gluon-cv.mxnet.io/build/examples_detection/demo_yolo.html#sphx-glr-build-examples-detection-demo-yolo-py
 from gluoncv import model_zoo, data, utils
 from matplotlib import pyplot as plt
+import gluoncv as gcv
 import time
 import sys
 import datetime
@@ -28,16 +29,13 @@ import psutil
 import scipy.misc
 from time import gmtime, strftime
 start = time.time()
-cap = cv2.VideoCapture(1)  # 0 - laptop   #1 - monitor  #2 external cam
-time.sleep(3)
-ret, frame = cap.read()
+
+url = sys.argv[1]
+
 uuid = '{0}_{1}'.format(strftime("%Y%m%d%H%M%S",gmtime()),uuid.uuid4())
 filename = 'images/gluoncv_image_{0}.jpg'.format(uuid)
-filename2 = 'images/gluoncv_image_p_{0}.jpg'.format(uuid)
-cv2.imwrite(filename, frame)
-
-# requires gluoncv 0.3 which is in beta when I did this
-# 24-sept-2018
+filename2 = 'images/gluoncv_image_tra_{0}.jpg'.format(uuid)
+gcv.utils.download(url, filename, True)
 
 net = model_zoo.get_model('yolo3_darknet53_voc', pretrained=True)
 

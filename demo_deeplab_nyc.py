@@ -40,11 +40,9 @@ filename = 'images/dl3_org_nyc_{0}.png'.format(uuid)
 url = sys.argv[1]
 gluoncv.utils.download(url, filename, True)
 
-##############################################################################
 # load the image
 img = image.imread(filename)
 
-##############################################################################
 # normalize the image using dataset mean
 transform_fn = transforms.Compose([
     transforms.ToTensor(),
@@ -53,27 +51,16 @@ transform_fn = transforms.Compose([
 img = transform_fn(img)
 img = img.expand_dims(0).as_in_context(ctx)
 
-##############################################################################
 # Load the pre-trained model and make prediction
-# ----------------------------------------------
-#
 # get pre-trained model
 model = gluoncv.model_zoo.get_model('deeplab_resnet101_ade', pretrained=True)
 
 ##############################################################################
-# make prediction using single scale
 output = model.demo(img)
 predict = mx.nd.squeeze(mx.nd.argmax(output, 1)).asnumpy()
 
 ##############################################################################
-# Add color pallete for visualization
 from gluoncv.utils.viz import get_color_pallete
 import matplotlib.image as mpimg
 mask = get_color_pallete(predict, 'ade20k')
-#mask.save('output.png')
 mask.save(filename2)
-# show the predicted mask
-#mmask = mpimg.imread('output.png')
-#plt.imshow(mmask)
-#plt.show()
-#plt.savefig(filename2)
